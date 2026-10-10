@@ -1,0 +1,862 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="紫微斗數雙系統論命：欽天四化與占驗派排盤、四化飛星與命書輸出">
+<title>紫微斗數雙系統論命</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Serif+TC:wght@500;700&display=swap">
+<style>
+/* 版面：左側問測者面板 + 右側傳統十二宮方盤（中宮為命主資料），下方為命書輸出 */
+:root{
+  --bg:#EEF0F4; --paper:#FBFBFD; --ink:#1C1F2B; --muted:#5E6475; --line:#C9CDD8; --soft:#E2E5EC;
+  --accent:#8A6A1F; --accent-ink:#FFFFFF; --sel:#F3E7C6; --sf:#F7F1E1;
+  --lu:#1D7A4C; --quan:#7A3E9D; --ke:#2563A6; --ji:#C0362C; --sha:#9B3B30; --luck:#1D6A7A;
+  --display:"LXGW WenKai TC","Noto Serif TC","PingFang TC","Microsoft JhengHei",serif;
+  --serif:"Noto Serif TC","PMingLiU",serif;
+  --sans:system-ui,-apple-system,"PingFang TC","Microsoft JhengHei","Noto Sans TC",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12141B; --paper:#1A1D27; --ink:#E6E8EF; --muted:#9AA0B2; --line:#343949; --soft:#262A37;
+  --accent:#D9B45A; --accent-ink:#1A1608; --sel:#3A3220; --sf:#2A261C;
+  --lu:#4CC78A; --quan:#C08BE0; --ke:#6FA8E8; --ji:#F0776B; --sha:#E28A7E; --luck:#5EC2D4; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12141B; --paper:#1A1D27; --ink:#E6E8EF; --muted:#9AA0B2; --line:#343949; --soft:#262A37;
+  --accent:#D9B45A; --accent-ink:#1A1608; --sel:#3A3220; --sf:#2A261C;
+  --lu:#4CC78A; --quan:#C08BE0; --ke:#6FA8E8; --ji:#F0776B; --sha:#E28A7E; --luck:#5EC2D4; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6}
+.wrap{max-width:1280px;margin:0 auto;padding:20px 16px 48px;display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+.top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 20px;border-bottom:1px solid var(--line);padding-bottom:12px}
+.top h1{font-family:var(--display);font-weight:700;font-size:clamp(1.6rem,3vw,2.2rem);margin:0;letter-spacing:.04em;text-wrap:balance}
+.top p{margin:0;color:var(--muted);font-size:.9rem}
+.school{display:flex;gap:4px;background:var(--soft);padding:4px;border-radius:8px}
+.school label{padding:4px 12px;border-radius:6px;cursor:pointer;font-size:.9rem}
+.school input{position:absolute;opacity:0;pointer-events:none}
+.school label:has(input:checked){background:var(--paper);color:var(--accent);font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.school label:has(input:focus-visible){outline:2px solid var(--accent)}
+.main{display:grid;grid-template-columns:280px minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.main{grid-template-columns:minmax(0,1fr)}}
+.panel{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;min-width:0}
+.box{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px}
+.box h2{font-family:var(--display);font-size:1.05rem;margin:0 0 10px;letter-spacing:.06em}
+form{display:grid;gap:10px}
+.f{display:grid;gap:3px;font-size:.85rem;color:var(--muted)}
+.f input,.f select{font:inherit;font-size:.95rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chk{display:flex;align-items:center;gap:6px;font-size:.85rem}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;cursor:pointer}
+.btn{border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);border-radius:6px;padding:7px 14px;font-weight:600}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn:focus-visible,.cell:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#caseList{list-style:none;margin:0;padding:0;display:grid;gap:2px;max-height:240px;overflow:auto}
+#caseList li{display:flex}
+#caseList button{flex:1;text-align:left;background:none;border:0;border-radius:6px;padding:5px 8px;color:var(--ink)}
+#caseList button[aria-current="true"]{background:var(--sel);font-weight:700}
+#caseList button:hover{background:var(--soft)}
+#caseList small{color:var(--muted);margin-left:6px;font-size:.75rem}
+#caseList .del{flex:0 0 auto;color:var(--muted);font-size:.8rem}
+.ref{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ref input{font:inherit;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 8px}
+.ref button{background:var(--soft);border:1px solid var(--line);color:var(--ink);border-radius:6px;padding:4px 8px;font-size:.85rem}
+.err{color:var(--ji);font-size:.9rem;margin:0}
+/* 命盤 */
+.chartbox{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;min-width:0}
+#scopeTabs{display:flex;flex-wrap:wrap;gap:6px}
+#scopeTabs button{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:4px 14px;font-size:.9rem}
+#scopeTabs button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chartscroll{overflow-x:auto;border-radius:10px}
+#chart{position:relative;display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));grid-template-rows:repeat(4,minmax(168px,auto));min-width:620px;background:var(--line);gap:1px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.cell{all:unset;box-sizing:border-box;background:var(--paper);padding:7px 7px 5px;display:flex;flex-direction:column;gap:3px;cursor:pointer;position:relative;min-width:0}
+.cell:hover{background:var(--sf)}
+.cell.sf{background:var(--sf)}
+.cell.sel{background:var(--sel)}
+.cell.life::after{content:"";position:absolute;inset:2px;border:2px solid var(--accent);border-radius:4px;pointer-events:none}
+.stars{display:flex;flex-wrap:wrap;gap:2px 8px}
+.st{white-space:nowrap}
+.st.maj{font-family:var(--serif);font-weight:700;font-size:1.02rem;color:var(--ink)}
+.st.min{font-size:.82rem;color:var(--muted)}
+.st.min.sha{color:var(--sha)} .st.min.luck{color:var(--luck)}
+.st sub{font-size:.66rem;font-weight:400;color:var(--muted);vertical-align:baseline;margin-left:1px}
+.empty{color:var(--muted);font-size:.85rem}
+.minors{display:flex;flex-wrap:wrap;gap:0 8px}
+.adj{font-size:.7rem;color:var(--muted);line-height:1.35}
+.scs{font-size:.72rem;color:var(--accent);line-height:1.35}
+.hua{font-style:normal;display:inline-block;font-size:.66rem;line-height:1;padding:2px 3px;border-radius:3px;margin-left:2px;color:#fff;vertical-align:2px;font-family:var(--sans);font-weight:700}
+.h-祿{background:var(--lu)} .h-權{background:var(--quan)} .h-科{background:var(--ke)} .h-忌{background:var(--ji)}
+.hua.self,.hua.sc{background:transparent;border:1px solid currentColor}
+.hua.self::before{content:"↑"}
+.hua.in{background:transparent;border:1px solid currentColor;border-style:dotted}
+.hua.in::before{content:"↓"}
+.hua.in.h-祿{color:var(--lu)} .hua.in.h-權{color:var(--quan)} .hua.in.h-科{color:var(--ke)} .hua.in.h-忌{color:var(--ji)}
+.hua.self.h-祿,.hua.sc.h-祿{color:var(--lu)} .hua.self.h-權,.hua.sc.h-權{color:var(--quan)} .hua.self.h-科,.hua.sc.h-科{color:var(--ke)} .hua.self.h-忌,.hua.sc.h-忌{color:var(--ji)}
+.hua.sc{border-style:dashed}
+.foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:4px;font-size:.72rem;color:var(--muted);line-height:1.25;padding-top:4px;border-top:1px dotted var(--line)}
+.pn{text-align:center;display:grid}
+.pn b{font-family:var(--display);font-size:.98rem;color:var(--ink);letter-spacing:.08em}
+.pn b em{font-style:normal;font-size:.68rem;background:var(--accent);color:var(--accent-ink);border-radius:3px;padding:0 3px;margin-left:3px;vertical-align:2px}
+.pn .scn{font-size:.78rem;color:var(--accent);letter-spacing:0}
+.gz{text-align:right;font-family:var(--serif);font-size:.8rem;color:var(--ink)}
+.center{grid-row:2/4;grid-column:2/4;background:var(--paper);padding:14px 18px;display:flex;flex-direction:column;gap:6px;position:relative;isolation:isolate}
+.center>*:not(svg){position:relative;z-index:1}
+.cname{font-family:var(--display);font-size:1.5rem;font-weight:700;letter-spacing:.05em}
+.cmeta{color:var(--muted);font-size:.85rem}
+.center dl{display:grid;grid-template-columns:auto 1fr;gap:1px 12px;margin:4px 0;font-size:.86rem}
+.center dt{color:var(--muted)} .center dd{margin:0;font-variant-numeric:tabular-nums}
+.flybox{display:flex;background:color-mix(in srgb,var(--bg) 85%,transparent);flex-wrap:wrap;gap:4px 10px;font-size:.85rem;background:var(--bg);border-radius:6px;padding:8px 10px}
+.flybox b{width:100%;font-family:var(--display)} .flybox small{width:100%;color:var(--muted)}
+.flybox.hint{color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;font-size:.75rem;color:var(--muted);margin-top:auto}
+svg.lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.55}
+svg.lines line{vector-effect:non-scaling-stroke;stroke-width:1.6}
+.sfl{stroke:var(--accent);stroke-dasharray:4 3;opacity:.8}
+.fl.f-祿{stroke:var(--lu)} .fl.f-權{stroke:var(--quan)} .fl.f-科{stroke:var(--ke)} .fl.f-忌{stroke:var(--ji);stroke-width:2.4}
+/* 命書選單 */
+.book{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+#menu{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+#menu fieldset{border:1px solid var(--line);border-radius:8px;margin:0;padding:8px 12px 10px;display:grid;gap:2px;min-width:0}
+#menu legend{font-family:var(--display);font-weight:700;padding:0 4px;display:flex;gap:8px;align-items:center}
+#menu legend span{display:flex;gap:4px}
+#menu legend button{font-family:var(--sans);font-weight:400;font-size:.72rem;border:1px solid var(--line);background:var(--bg);color:var(--muted);border-radius:4px;padding:0 6px}
+#menu label{display:flex;align-items:flex-start;gap:6px;font-size:.88rem;cursor:pointer;line-height:1.45;padding:2px 0}
+#menu input{margin-top:3px;accent-color:var(--accent)}
+.tag{font-style:normal;font-size:.68rem;border-radius:3px;padding:1px 5px;margin-left:4px;white-space:nowrap;border:1px solid}
+.tag.qt{color:var(--ke)} .tag.zy{color:var(--quan)}
+/* 命書內容 */
+#report{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;min-width:0}
+.rh{border-bottom:2px solid var(--ink);padding-bottom:8px}
+.rh h2{font-family:var(--display);font-size:1.6rem;margin:0}
+.rh p{margin:4px 0 0;color:var(--muted);font-size:.88rem}
+.gh{font-family:var(--display);font-size:1.25rem;margin:10px 0 0;color:var(--accent);letter-spacing:.08em}
+.rs{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 18px}
+.rs h3{font-family:var(--display);font-size:1.1rem;margin:0 0 8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rs h3 .tag{margin:0;font-family:var(--sans)}
+.rs h4{font-family:var(--display);font-size:.98rem;margin:12px 0 4px}
+.rs h4 small{font-family:var(--sans);font-weight:400;color:var(--muted);margin-left:8px;font-size:.8rem}
+.rs p,.rs li{max-width:72ch}
+.rs ul{margin:0;padding-left:1.2em;display:grid;gap:4px}
+.pal{border-top:1px dotted var(--line);padding-top:4px}
+.pal:first-of-type{border-top:0}
+.pal p{margin:2px 0 6px}
+.muted{color:var(--muted)}
+.zy-note{background:var(--sf);border-radius:6px;padding:8px 12px}
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px}
+.pat{border:1px solid var(--line);border-radius:8px;padding:8px 10px;display:grid;gap:2px}
+.pat b{font-family:var(--display);color:var(--accent)}
+.pat span{font-size:.88rem}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--soft);white-space:nowrap}
+th{color:var(--muted);font-weight:600;font-size:.8rem}
+tr.now td{background:var(--sel);font-weight:600}
+td.bar{width:30%;min-width:100px}
+td.bar span{display:block;height:8px;border-radius:4px}
+td.bar .pos{background:var(--lu)} td.bar .neg{background:var(--ji)}
+.lv{font-style:normal;font-size:.78rem;padding:1px 8px;border-radius:999px;border:1px solid}
+.lv.g2,.lv.g1{color:var(--lu)} .lv.n{color:var(--muted)} .lv.b1,.lv.b2{color:var(--ji)}
+.lv.g2,.lv.b2{font-weight:700}
+.kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.kv div{background:var(--bg);border-radius:8px;padding:10px 12px;display:grid}
+.kv span{font-size:.78rem;color:var(--muted)} .kv b{font-family:var(--display);font-size:1.1rem}
+.foot-note{font-size:.82rem}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+</style>
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}</style></head><body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>紫微斗數雙系統論命</h1>
+      <p>欽天四化 × 占驗派・排盤、四化飛星與命書輸出</p>
+    </div>
+    <div class="school" role="radiogroup" aria-label="派別設定">
+      <label><input type="radio" name="school" id="sc-both" value="both">雙系統</label>
+      <label><input type="radio" name="school" id="sc-zy" value="zy">占驗派</label>
+      <label><input type="radio" name="school" id="sc-qt" value="qt">欽天四化</label>
+    </div>
+  </header>
+
+  <div class="main">
+    <aside class="panel">
+      <section class="box">
+        <h2>問測者基本資料</h2>
+        <form id="form">
+          <label class="f">姓名<input id="fName" autocomplete="off"></label>
+          <div class="row2">
+            <label class="f">性別<select id="fGender"><option value="男">男</option><option value="女">女</option></select></label>
+            <label class="f">曆法<select id="fCal"><option value="solar">國曆</option><option value="lunar">農曆</option></select></label>
+          </div>
+          <label class="f">出生日期<input id="fDate" type="date" min="1900-01-01" max="2100-12-31"></label>
+          <label class="chk" id="leapWrap" hidden><input type="checkbox" id="fLeap">閏月</label>
+          <label class="f">出生時辰<select id="fHour"></select></label>
+          <div class="btns">
+            <button class="btn" type="submit">排盤</button>
+            <button class="btn ghost" type="button" id="saveCase">儲存問測者</button>
+          </div>
+          <p class="err" id="err" role="alert" hidden></p>
+        </form>
+      </section>
+      <section class="box">
+        <h2>問測者名單</h2>
+        <ul id="caseList"></ul>
+      </section>
+    </aside>
+
+    <section class="chartbox" aria-label="紫微斗數星盤">
+      <div class="ref">
+        <label for="fRef" class="muted">論命日期</label><input type="date" id="fRef">
+        <button type="button" id="yPrev" aria-label="前一年">‹ 年</button><button type="button" id="yNext" aria-label="後一年">年 ›</button>
+        <button type="button" id="mPrev" aria-label="前一月">‹ 月</button><button type="button" id="mNext" aria-label="後一月">月 ›</button>
+        <button type="button" id="today">今天</button>
+        <select id="fDec" aria-label="切換大限"></select>
+        <label class="chk"><input type="checkbox" id="fMini">極簡星盤</label>
+      </div>
+      <div id="scopeTabs" role="group" aria-label="星盤類型">
+        <button type="button" data-sc="base">基本星盤</button>
+        <button type="button" data-sc="decadal">大運星盤</button>
+        <button type="button" data-sc="yearly">流年星盤</button>
+        <button type="button" data-sc="monthly">流月星盤</button>
+        <button type="button" data-sc="daily">流日星盤</button>
+      </div>
+      <div class="chartscroll"><div id="chart"></div></div>
+    </section>
+  </div>
+
+  <section class="box book">
+    <h2>命書輸出（可單選或複選）</h2>
+    <div id="menu"></div>
+    <div class="btns"><button class="btn" type="button" id="gen">產製命書</button><button class="btn ghost" type="button" id="copy">複製命書文字</button></div>
+  </section>
+
+  <div id="report" aria-live="polite"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/iztro@2.5.8/dist/iztro.min.js"></script>
+<script>
+/* ===== 紫微斗數知識庫（原創整理，供論命文字組合用） ===== */
+const PALACES = ['命宮','兄弟','夫妻','子女','財帛','疾厄','遷移','僕役','官祿','田宅','福德','父母'];
+const PALACE_INFO = {
+  '命宮':{k:'self',象:'自己的個性、才華與一生主軸',short:'自我'},
+  '兄弟':{k:'kin',象:'手足、同輩與合夥關係，也代表現金週轉',short:'手足'},
+  '夫妻':{k:'spouse',象:'配偶、感情模式與婚姻',short:'婚姻'},
+  '子女':{k:'kin',象:'子女、晚輩、學生與性生活，也代表合夥投資',short:'子女'},
+  '財帛':{k:'wealth',象:'賺錢方式、現金流與理財態度',short:'錢財'},
+  '疾厄':{k:'health',象:'身體體質、健康與工作場所',short:'健康'},
+  '遷移':{k:'outside',象:'外出、人緣、社會形象與出外運',short:'出外'},
+  '僕役':{k:'kin',象:'朋友、同事、部屬與眾人緣',short:'朋友'},
+  '官祿':{k:'career',象:'工作、事業發展與學業',short:'事業'},
+  '田宅':{k:'property',象:'家庭、房產、置產與財庫',short:'家宅'},
+  '福德':{k:'mind',象:'精神生活、興趣、福氣與用錢的心態',short:'福氣'},
+  '父母':{k:'kin',象:'父母、長官、文書契約與相貌',short:'長上'}
+};
+const OPP = {'命宮':'遷移','兄弟':'僕役','夫妻':'官祿','子女':'田宅','財帛':'福德','疾厄':'父母','遷移':'命宮','僕役':'兄弟','官祿':'夫妻','田宅':'子女','福德':'財帛','父母':'疾厄'};
+
+/* 十四主星：五行、關鍵字與各宮論述 */
+const STARS = {
+ '紫微':{wx:'土',key:'帝座、尊貴、領導',
+  self:'自尊心強，有主見與格局，喜歡被尊重，做事愛掌全局；優點是穩重大方，缺點是耳根子軟、愛面子。',
+  kin:'與這類親友相處時你多處於被照顧或需要被尊重的位置，對方多有身分地位。',
+  spouse:'配偶多半有主見、重面子，條件不差；婚姻中雙方都想當家，需互相給台階。',
+  wealth:'求財有大格局，適合靠地位與管理賺錢，花錢講究品味，排場支出要節制。',
+  health:'留意脾胃、消化與腫脹問題，壓力大時容易累積在腸胃。',
+  outside:'出外有貴氣，容易被提拔，在外表現比在家更好。',
+  career:'適合管理、主管、公職或自行創業，要站在決策位置才能發揮。',
+  property:'重視居家品質，家宅氣派，晚年多能擁有自己的房產。',
+  mind:'精神上追求被肯定，愛享受，內心孤高，宜培養能分享的興趣。'},
+ '天機':{wx:'木',key:'智慧、謀略、變動',
+  self:'腦筋靈活、反應快，善於分析與規劃，點子多；缺點是想太多、容易心神不寧。',
+  kin:'與這些親友互動多靠溝通與動腦，關係變化較多，聚散較快。',
+  spouse:'配偶聰明多慮，感情上重溝通；婚姻宜晚，避免因多疑而起口角。',
+  wealth:'靠專業、企劃或技術賺錢，財來財去變動快，宜有計畫地儲蓄。',
+  health:'留意肝膽、神經系統與四肢筋骨，避免用腦過度失眠。',
+  outside:'外出機會多，奔波勞動中得到機會，適合往外發展。',
+  career:'適合企劃、研發、顧問、資訊、教育等動腦的工作，換工作頻率較高。',
+  property:'居住變動多，常搬家或改裝，置產前宜多比較。',
+  mind:'思慮細密，閒不下來，宜學習靜心與規律作息。'},
+ '太陽':{wx:'火',key:'光明、付出、名聲',
+  self:'熱情大方、心直口快，愛照顧人，重名譽；缺點是好管閒事、付出多回收少。',
+  kin:'在這層關係裡多半是你付出或照顧對方，與男性長輩或同輩的緣分較深。',
+  spouse:'配偶開朗外向、事業心重；宜多體諒對方在外忙碌，避免一方過度犧牲。',
+  wealth:'先求名後求利，財富隨名聲而來，花錢豪爽，宜控制人情開銷。',
+  health:'留意眼睛、血壓、心血管與頭部，不宜長期熬夜。',
+  outside:'在外光芒外露，人緣佳，適合公開舞台。',
+  career:'適合公職、教育、傳播、政治、外貿等公眾性質的工作。',
+  property:'家中採光好，熱鬧，常有人往來，宜注意家用電器與火源。',
+  mind:'樂於助人，精神上需要被看見，忙碌中反而安心。'},
+ '武曲':{wx:'金',key:'財星、果決、執行',
+  self:'個性剛直果斷，重實際、講效率，理財觀念強；缺點是不夠圓融、說話直接。',
+  kin:'與這些親友之間容易牽涉金錢往來，關係務實，界線要分明。',
+  spouse:'配偶能幹、個性剛強；夫妻宜分工清楚，晚婚較穩。',
+  wealth:'正財星坐守，賺錢能力強，適合金融、實業，能存得住錢。',
+  health:'留意呼吸系統、肺與大腸，以及金屬器械造成的外傷。',
+  outside:'出外辦事果斷，在外容易靠專業取得財利。',
+  career:'適合金融、財務、軍警、工程、機械、五金等專業領域。',
+  property:'有置產能力，買房偏好實用，重視財庫累積。',
+  mind:'內心勞碌，總想多做一點，宜學會放鬆。'},
+ '天同':{wx:'水',key:'福星、溫和、享受',
+  self:'性情溫和、隨和好相處，重感受，懂得享受生活；缺點是較懶散、缺乏衝勁。',
+  kin:'與這些親友相處和氣，彼此照應，較少衝突。',
+  spouse:'配偶性格溫和、年紀可能較小；婚姻重感情交流，宜共同規劃財務。',
+  wealth:'白手成家型，財來得慢但穩，不宜投機。',
+  health:'留意泌尿、腎臟與水分代謝，避免貪吃發胖。',
+  outside:'出外人緣好，常得朋友幫忙，旅遊運佳。',
+  career:'適合服務業、餐飲、社福、設計、娛樂等輕鬆愉快的工作環境。',
+  property:'家庭和樂，喜歡舒適的居所，置產較晚。',
+  mind:'福氣好，懂得自得其樂，但需防安逸過度。'},
+ '廉貞':{wx:'火',key:'次桃花、能力、是非',
+  self:'個性鮮明、好勝心強，能力全面且有魅力；缺點是情緒起伏、容易樹敵。',
+  kin:'與這些親友關係較複雜，容易愛恨交織，宜保持距離感。',
+  spouse:'配偶有個性、具魅力；感情濃烈，需防第三者與口角。',
+  wealth:'財源多與專業或特殊行業有關，宜守法經營，避免灰色地帶。',
+  health:'留意血液循環、心臟、婦科或泌尿生殖系統。',
+  outside:'在外交際手腕佳，但要防小人與是非。',
+  career:'適合政治、法律、公關、電子、技術或需要強勢執行力的工作。',
+  property:'居家容易變動，宜注意居家安全與消防。',
+  mind:'內心敏感好強，宜找正向出口抒發。'},
+ '天府':{wx:'土',key:'財庫、穩重、包容',
+  self:'穩重保守、氣度大，善於守成與管理；缺點是固執、缺乏冒險精神。',
+  kin:'與這些親友關係穩定，多能互相幫襯，你常扮演後盾。',
+  spouse:'配偶穩重顧家、有包容力；婚姻平穩，宜多表達感受。',
+  wealth:'財庫星，善於儲蓄理財，財運穩健，宜長期累積。',
+  health:'留意脾胃與消化系統，飲食宜節制。',
+  outside:'在外受人信任，適合穩紮穩打。',
+  career:'適合行政、財務、管理、銀行、不動產等穩定型職業。',
+  property:'能守住祖業或自購房產，晚年財庫豐厚。',
+  mind:'心態知足，重視安全感與生活品質。'},
+ '太陰':{wx:'水',key:'財星、母性、細膩',
+  self:'細膩溫柔、內斂含蓄，審美力好，重視家庭；缺點是多愁善感、猶豫不決。',
+  kin:'與女性親友緣分較深，彼此以情感支持為主。',
+  spouse:'配偶溫柔體貼、重視家庭；男命易得賢妻，女命感情細膩。',
+  wealth:'財運靠累積，適合不動產與長期儲蓄，女性貴人帶財。',
+  health:'留意眼睛、腎臟與內分泌，女性宜注意婦科。',
+  outside:'在外溫和低調，夜間或幕後活動較順。',
+  career:'適合金融、不動產、設計、美容、文藝等細緻的工作。',
+  property:'田宅之主，與房地產有緣，宜置產。',
+  mind:'內心豐富，重感受，宜培養藝文興趣調節情緒。'},
+ '貪狼':{wx:'水木',key:'桃花、慾望、多才',
+  self:'多才多藝、交際手腕好，慾望與企圖心強；缺點是貪多、定性不足。',
+  kin:'與這些親友多因吃喝玩樂結緣，關係熱絡但需防牽扯。',
+  spouse:'配偶有魅力、懂生活情趣；需防桃花與感情糾紛。',
+  wealth:'財源多元，偏財運強，宜防投機與玩樂開銷。',
+  health:'留意肝腎、泌尿生殖與酒色過度。',
+  outside:'外出交際活躍，在外容易遇到機會與桃花。',
+  career:'適合業務、公關、演藝、餐飲、娛樂、宗教玄學等需要人際的工作。',
+  property:'居家喜歡裝飾，購屋易衝動，宜量力。',
+  mind:'愛熱鬧、慾望多，宜以宗教、藝術或運動轉化。'},
+ '巨門':{wx:'水',key:'口才、是非、研究',
+  self:'口才好、分析力強，善於鑽研；缺點是多疑、言語易得罪人。',
+  kin:'與這些親友之間容易有口舌誤會，溝通方式要更溫和。',
+  spouse:'配偶口才好或愛唸，婚姻中溝通是關鍵，宜避免冷戰。',
+  wealth:'靠口才或專業知識賺錢，財多因競爭而得。',
+  health:'留意口腔、腸胃與呼吸道。',
+  outside:'出外多是非口舌，但也容易憑口才打開局面。',
+  career:'適合教師、律師、業務、傳播、醫療、研究等用口用腦的工作。',
+  property:'居家易有爭執或噪音，宜選擇安靜的居所。',
+  mind:'思慮多，容易鑽牛角尖，宜多與人交流。'},
+ '天相':{wx:'水',key:'印星、協調、正義',
+  self:'溫和有禮、重視外表與公平，善協調，有服務精神；缺點是易受左右、缺乏主見。',
+  kin:'與這些親友之間你常是協調者，互相扶持。',
+  spouse:'配偶端莊體面、責任感強；婚姻重視互相尊重。',
+  wealth:'財運平順，靠穩定職業取財，衣食無缺。',
+  health:'留意皮膚、泌尿系統與膀胱。',
+  outside:'在外得人信賴，適合擔任幕僚與協調。',
+  career:'適合秘書、幕僚、公職、法務、人資等協助管理的職務。',
+  property:'居家整潔，置產多以實用為主。',
+  mind:'重視秩序與公平，內心容易替別人著想。'},
+ '天梁':{wx:'土',key:'蔭星、長者、解厄',
+  self:'成熟穩重、喜歡照顧他人，有長者風範；缺點是愛說教、有點固執。',
+  kin:'在這層關係中常有長輩庇蔭，或你扮演照顧者。',
+  spouse:'配偶年長或個性成熟；婚姻中宜減少說教，多些包容。',
+  wealth:'財來自名望與專業，不宜投機，宜穩健。',
+  health:'有逢凶化吉的力量，但留意胃部與老年慢性病。',
+  outside:'出外常遇貴人相助，能化險為夷。',
+  career:'適合醫療、保險、教育、社工、宗教、公職、監察等。',
+  property:'易承祖業或得長輩照顧，家宅安定。',
+  mind:'有宗教或哲學傾向，喜歡清靜與思考。'},
+ '七殺':{wx:'金',key:'將星、衝勁、開創',
+  self:'個性剛烈、勇於冒險，獨立自主，行動力強；缺點是衝動、不夠圓融。',
+  kin:'與這些親友各自獨立，聚少離多，或關係較直接強硬。',
+  spouse:'配偶個性強、有主見；感情來得快，宜避免爭強。',
+  wealth:'財來財去起伏大，適合開創型賺錢，需防一時衝動。',
+  health:'留意呼吸系統、意外外傷與手術。',
+  outside:'外出奔波打拼，出外發展比留在原地好。',
+  career:'適合軍警、業務、創業、工程、外科、運動等具挑戰性的工作。',
+  property:'居所變動多，早年不易守住祖業。',
+  mind:'內心勞碌、不服輸，宜學習放慢腳步。'},
+ '破軍':{wx:'水',key:'耗星、破舊立新、變革',
+  self:'敢愛敢恨、勇於突破現狀，有開創精神；缺點是反覆無常、耗損較多。',
+  kin:'與這些親友關係起伏大，易有變化或分合。',
+  spouse:'配偶有個性、好動；婚姻易有波折，宜晚婚。',
+  wealth:'先破後成，財來財去，需建立強制儲蓄。',
+  health:'留意泌尿生殖、腎臟與意外破相。',
+  outside:'出外變動大，適合開疆闢土。',
+  career:'適合創業、改革、拆除重建、工程、物流、軍警等變動型行業。',
+  property:'易搬遷或改建，先破後成。',
+  mind:'精神不安定，喜新厭舊，宜培養長期興趣。'}
+};
+const MINOR_DESC = {
+ '左輔':'吉星，代表平輩助力，處事得人協助。','右弼':'吉星，代表暗中助力與包容力。',
+ '文昌':'吉星，主學業、文書與考試，利讀書取功名。','文曲':'吉星，主口才、才藝與異路功名。',
+ '天魁':'貴人星（陽貴），主明處貴人與長官提拔。','天鉞':'貴人星（陰貴），主暗中貴人與異性助力。',
+ '祿存':'財祿星，主穩定的財源與保守累積。','天馬':'驛馬星，主奔波、外出與變動中求財。',
+ '擎羊':'煞星，性剛主衝突、刑傷，宜防衝動。','陀羅':'煞星，主拖延、糾纏，事多反覆。',
+ '火星':'煞星，主急躁、突發事件。','鈴星':'煞星，主暗中困擾與悶氣。',
+ '地空':'空曜，主精神追求、計畫落空或錢財難聚。','地劫':'劫曜，主破耗、意外損失。'
+};
+const LUCKY = ['左輔','右弼','文昌','文曲','天魁','天鉞'];
+const SHA = ['擎羊','陀羅','火星','鈴星','地空','地劫'];
+const PEACH = ['貪狼','廉貞','紅鸞','天喜','天姚','咸池'];
+
+/* 四化：生年四化在十二宮 */
+const HUA_NAME = ['祿','權','科','忌'];
+const HUA_KEY = {祿:'緣分、福氣與收穫',權:'掌控、主導與競爭',科:'名聲、貴人與平順',忌:'執著、虧欠與變動'};
+const HUA_PALACE = {
+ 祿:{'命宮':'天生有福有人緣，個性樂觀，做事容易得到助力。','兄弟':'與手足同輩緣佳，能互相幫忙，資金週轉順暢。','夫妻':'與配偶緣分深，感情甜蜜，也容易早有戀愛機會。','子女':'與子女晚輩緣佳，合夥與投資有收穫。','財帛':'財運佳，賺錢機會多，一生較少為錢煩惱。','疾厄':'體質不錯，工作環境舒適，心寬體胖。','遷移':'出外人緣好，在外容易得到好機會。','僕役':'朋友多且肯幫忙，眾人緣佳。','官祿':'工作順利，事業有發展，容易做出成績。','田宅':'家庭和樂，有置產機會，財庫豐厚。','福德':'有口福與享受的命，心態愉快，福氣深厚。','父母':'得父母長上疼愛，與長官相處融洽，文書契約順利。'},
+ 權:{'命宮':'個性有主見、能力強，喜歡掌握主導權。','兄弟':'手足同輩個性強勢，或你在同輩中有主導力。','夫妻':'配偶能幹或強勢，婚姻中要學會分權。','子女':'子女有主見，管教上宜多溝通。','財帛':'賺錢能力強，對財務有掌控欲，能靠能力取財。','疾厄':'體質強健，但工作壓力大、容易逞強。','遷移':'在外有表現舞台，具社會影響力。','僕役':'朋友部屬能力強，也可能想主導你。','官祿':'事業心旺盛，有權位與升遷機會。','田宅':'對家庭有主導權，有能力置產擴充。','福德':'精神上積極進取，對生活品質要求高。','父母':'父母或長官較嚴格，也代表能取得權威支持。'},
+ 科:{'命宮':'氣質斯文，有好名聲，遇事多有貴人化解。','兄弟':'手足和睦，同輩中有可靠的助力。','夫妻':'配偶有氣質教養，感情平順。','子女':'子女聰明好學，有出息。','財帛':'理財有條理，收入穩定，財以名來。','疾厄':'身體雖有小恙，多能及時醫治。','遷移':'在外形象佳，有好口碑。','僕役':'交友層次高，多良師益友。','官祿':'工作有名望，利考試與專業證照。','田宅':'家風良好，置產過程順利。','福德':'心態平和，有品味與修養。','父母':'父母有教養，文書與考試運佳。'},
+ 忌:{'命宮':'個性執著、凡事認真，一生較勞心，宜放寬心胸。','兄弟':'與手足同輩緣分較淡或有虧欠，資金週轉需謹慎。','夫妻':'對感情執著，婚姻易有波折，宜晚婚並多包容。','子女':'為子女操心，合夥投資需保守。','財帛':'對錢財看得重，財來財去，宜穩健理財。','疾厄':'需留意健康，工作勞碌，宜定期檢查。','遷移':'出外多波折，在外宜低調謹慎。','僕役':'易受朋友拖累，借貸作保需小心。','官祿':'工作執著、事業壓力大，易有變動。','田宅':'對家有責任感，房產宜謹慎處理。','福德':'思慮重，容易煩惱，宜培養紓壓方式。','父母':'與父母長上緣分需經營，文書契約要細看。'}
+};
+/* 宮干四化表（與命盤顯示一致） */
+const SIHUA_TABLE = {
+ '甲':['廉貞','破軍','武曲','太陽'],'乙':['天機','天梁','紫微','太陰'],'丙':['天同','天機','文昌','廉貞'],
+ '丁':['太陰','天同','天機','巨門'],'戊':['貪狼','太陰','右弼','天機'],'己':['武曲','貪狼','天梁','文曲'],
+ '庚':['太陽','武曲','太陰','天同'],'辛':['巨門','太陽','文曲','文昌'],'壬':['天梁','紫微','左輔','武曲'],
+ '癸':['破軍','巨門','太陰','貪狼']
+};
+const FLY_VERB = {祿:'把好處、心力與緣分給了',權:'想掌控、主導或用力於',科:'以理性、名聲或貴人照應',忌:'對其執著、有所虧欠而牽掛'};
+const SELF_HUA = {
+ 祿:'自化祿：此宮的好處容易隨緣流出，花得開也守不久，有「來得快去得快」之象。',
+ 權:'自化權：此宮事項常有突發的主導慾或態度強硬，事情來得急、變得快。',
+ 科:'自化科：此宮事項表面平順，貴人與好名聲較虛，凡事宜按部就班。',
+ 忌:'自化忌：此宮事項容易守不住、緣分較薄，或心中有放不下的事，需特別經營。'
+};
+/* 六合 */
+const LIUHE = [['子','丑'],['寅','亥'],['卯','戌'],['辰','酉'],['巳','申'],['午','未']];
+/* 地支 → 生肖守護（本命佛傳統說法） */
+const GUARDIAN = {'子':'千手觀音菩薩','丑':'虛空藏菩薩','寅':'虛空藏菩薩','卯':'文殊菩薩','辰':'普賢菩薩','巳':'普賢菩薩','午':'大勢至菩薩','未':'大日如來','申':'大日如來','酉':'不動明王','戌':'阿彌陀佛','亥':'阿彌陀佛'};
+const WX_LUCK = {
+ '木':{num:'3、8',color:'綠色、青色',dir:'東方',item:'木質飾品、綠色植物'},
+ '火':{num:'2、7',color:'紅色、紫色、橙色',dir:'南方',item:'紅色配件、明亮燈飾'},
+ '土':{num:'5、0',color:'黃色、咖啡色、米色',dir:'中央、東北、西南',item:'陶瓷、水晶原礦'},
+ '金':{num:'4、9',color:'白色、金色、銀色',dir:'西方',item:'金屬飾品、白水晶'},
+ '水':{num:'1、6',color:'黑色、藍色',dir:'北方',item:'流水擺件、藍色系配件'}
+};
+const ORGAN = {'木':'肝膽、筋骨、神經','火':'心臟、血液循環、眼睛','土':'脾胃、消化系統','金':'肺、呼吸道、大腸、皮膚','水':'腎臟、泌尿、內分泌'};
+const SHA_ADVICE = {
+ '擎羊':'遇事先停三秒再回應，避免正面衝突；開車與使用刀具要特別小心。',
+ '陀羅':'事情拖延時把大目標拆成小步驟，按表操課，避免糾纏不清的人事。',
+ '火星':'脾氣急的時候先離開現場，養成運動習慣讓火氣有出口。',
+ '鈴星':'悶在心裡的事要說出來，寫日記或找人傾訴，防止暗中累積壓力。',
+ '地空':'理想遠大時要配合可執行的計畫，投資前多問多看，避免空想。',
+ '地劫':'錢財做好分帳與保險，不輕易借貸作保，避免意外破耗。'
+};
+const IN_HUA = {
+ 祿:'對宮主動把好處送進來，{A}方面得來容易，常因{B}的因素而受益。',
+ 權:'對宮施加主導力量，{A}方面常被{B}推著走，宜掌握主動權。',
+ 科:'對宮帶來調和與貴人，{A}方面遇事多能透過{B}化解。',
+ 忌:'對宮的執著與壓力直接加在本宮，{A}方面容易被{B}拖累或牽絆，需設好界線。'
+};
+/* ===== 紫微斗數雙系統論命：主程式 ===== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const BRANCHES = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const HOURS = ['早子時 00–01','丑時 01–03','寅時 03–05','卯時 05–07','辰時 07–09','巳時 09–11','午時 11–13','未時 13–15','申時 15–17','酉時 17–19','戌時 19–21','亥時 21–23','晚子時 23–24'];
+const GRID_POS = [[3,0],[2,0],[1,0],[0,0],[0,1],[0,2],[0,3],[1,3],[2,3],[3,3],[3,2],[3,1]]; // 宮位 index 0=寅
+const SCOPES = {base:'本命',decadal:'大運',yearly:'流年',monthly:'流月',daily:'流日'};
+const SCOPE_PREFIX = {decadal:'運',yearly:'年',monthly:'月',daily:'日'};
+const GOOD_BRIGHT = ['廟','旺'], BAD_BRIGHT = ['陷','不'];
+const SAMPLE = {id:'sample', name:'範例・陳先生', gender:'男', cal:'solar', date:'1985-06-12', leap:false, hour:4, sample:true};
+
+const S = {cases:[], cur:null, school:'both', refDate:null, scope:'base', sel:null, a:null, h:null};
+const LS = {get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}, set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const showQT = () => S.school !== 'zy', showZY = () => S.school !== 'qt';
+
+/* ---------- 排盤 ---------- */
+function compute(){
+  const c = S.cur;
+  const a = c.cal === 'lunar'
+    ? iztro.astro.byLunar(c.date, +c.hour, c.gender, !!c.leap, true, 'zh-TW')
+    : iztro.astro.bySolar(c.date, +c.hour, c.gender, true, 'zh-TW');
+  S.a = a; S.h = a.horoscope(S.refDate, +c.hour);
+  // 天馬依農曆生月安星（以網站為準）：寅午戌月在申、申子辰月在寅、巳酉丑月在亥、亥卯未月在巳
+  const mb = (a.rawDates.lunarDate.lunarMonth + 1) % 12; // 月支：正月寅=2
+  const maBranch = {2:'申',6:'申',10:'申',8:'寅',0:'寅',4:'寅',5:'亥',9:'亥',1:'亥',11:'巳',3:'巳',7:'巳'}[mb];
+  let ma = null;
+  a.palaces.forEach(p=>{ const k=p.minorStars.findIndex(s=>s.name==='天馬'); if(k>=0) ma=p.minorStars.splice(k,1)[0]; });
+  if (ma) a.palaces.find(p=>p.earthlyBranch===maBranch).minorStars.push(ma);
+  // 索引
+  a.byName = {}; a.loc = {};
+  a.palaces.forEach((p,i)=>{
+    a.byName[p.name] = i;
+    [...p.majorStars, ...p.minorStars, ...p.adjectiveStars].forEach(s => { a.loc[s.name] = i; });
+  });
+  a.birthYear = +a.solarDate.split('-')[0];
+}
+const P = i => S.a.palaces[(i+12)%12];
+const idx = name => S.a.byName[name];
+const sanfang = i => [i, (i+4)%12, (i+8)%12, (i+6)%12];
+const mainNames = p => p.majorStars.filter(s=>STARS[s.name]).map(s=>s.name);
+const allNames = p => [...p.majorStars, ...p.minorStars, ...p.adjectiveStars].map(s=>s.name);
+function fly(i){ // 宮干飛化
+  const stem = P(i).heavenlyStem;
+  return SIHUA_TABLE[stem].map((star,k)=>({hua:HUA_NAME[k], star, to:S.a.loc[star]}));
+}
+function birthHua(){ // 生年四化落宮
+  const out = {};
+  S.a.palaces.forEach((p,i)=>[...p.majorStars,...p.minorStars].forEach(s=>{ if(s.mutagen) out[s.mutagen] = {star:s.name, to:i}; }));
+  return out;
+}
+function scopeMut(sc, h=S.h){ // 運限四化落宮
+  return h[sc].mutagen.map((star,k)=>({hua:HUA_NAME[k], star, to:S.a.loc[star]}));
+}
+function scopeName(sc, i, h=S.h){ return h[sc].palaceNames[i]; }
+function hYear(y){ return S.a.horoscope(new Date(y, 7, 15), +S.cur.hour); }
+
+/* ---------- 星盤繪製 ---------- */
+function badge(h, cls=''){ return `<i class="hua h-${h} ${cls}">${h}</i>`; }
+function renderChart(){
+  const a = S.a, h = S.h, sc = S.scope, bh = birthHua();
+  const selfMap = {}, inMap = {};
+  if (showQT()) a.palaces.forEach((p,i)=>fly((i+6)%12).forEach(f=>{ if(f.to===i){ (inMap[i]=inMap[i]||{})[f.star]=(inMap[i][f.star]||'')+f.hua; } }));
+  if (showQT()) a.palaces.forEach((p,i)=>fly(i).forEach(f=>{ if(f.to===i){ (selfMap[i]=selfMap[i]||{})[f.star]=(selfMap[i][f.star]||'')+f.hua; } }));
+  const scMut = {}; if (sc!=='base') scopeMut(sc).forEach(m=>{ scMut[m.star]=m.hua; });
+  let cells = '';
+  a.palaces.forEach((p,i)=>{
+    const [r,c] = GRID_POS[i];
+    const starHtml = (s, major) => {
+      const self = selfMap[i]?.[s.name] || '';
+      return `<span class="st ${major?'maj':'min'} ${SHA.includes(s.name)?'sha':''} ${LUCKY.includes(s.name)||s.name==='祿存'?'luck':''}">${s.name}${s.brightness?`<sub>${s.brightness}</sub>`:''}${s.mutagen?badge(s.mutagen):''}${scMut[s.name]?badge(scMut[s.name],'sc'):''}${[...self].map(x=>badge(x,'self')).join('')}${[...(inMap[i]?.[s.name]||'')].map(x=>badge(x,'in')).join('')}</span>`;
+    };
+    const maj = p.majorStars.map(s=>starHtml(s,true)).join('');
+    const min = p.minorStars.map(s=>starHtml(s,false)).join('');
+    const adj = p.adjectiveStars.map(s=>s.name).join(' ');
+    const scStars = sc!=='base' ? (h[sc].stars?.[i]||[]).map(s=>s.name).join(' ') : '';
+    const scName = sc!=='base' ? `<b class="scn">${SCOPE_PREFIX[sc]}${scopeName(sc,i).replace('宮','')}</b>` : '';
+    const isScopeLife = sc!=='base' && h[sc].index===i;
+    const cls = ['cell', S.sel===i?'sel':'', S.sel!==null && sanfang(S.sel).includes(i) && S.sel!==i ? 'sf':'', isScopeLife?'life':''].join(' ');
+    cells += `<button class="${cls}" style="grid-row:${r+1};grid-column:${c+1}" data-i="${i}" aria-label="${p.name}">
+      <div class="stars">${maj||'<span class="empty">無主星</span>'}</div>
+      <div class="minors">${min}</div>
+      ${S.mini?'':`<div class="adj">${adj}</div>`}
+      ${scStars?`<div class="scs">${scStars}</div>`:''}
+      <div class="foot"><span class="cs">${S.mini?'':`${p.changsheng12}<br>${p.boshi12}`}</span>
+        <span class="pn">${scName}<b>${p.name}${p.isBodyPalace?'<em>身</em>':''}</b><small>${p.decadal.range.join('–')}・小限${p.ages[0]}</small></span>
+        <span class="gz">${p.heavenlyStem}<br>${p.earthlyBranch}</span></div>
+    </button>`;
+  });
+  const dec = h.decadal, yr = h.yearly;
+  const flyBox = S.sel!==null ? (()=>{
+    const p = P(S.sel);
+    return `<div class="flybox"><b>${p.name}（${p.heavenlyStem}${p.earthlyBranch}）宮干飛化</b>${fly(S.sel).map(f=>`<span>${badge(f.hua)}${f.star}→${f.to===undefined?'—':(f.to===S.sel?'自化':P(f.to).name)}</span>`).join('')}<small>三方四正：${sanfang(S.sel).slice(1).map(j=>P(j).name).join('、')}</small></div>`;
+  })() : `<div class="flybox hint">點選任一宮位，可看三方四正${showQT()?'與宮干飛化':''}</div>`;
+  const center = `<div class="center"><svg class="lines" viewBox="0 0 200 200" preserveAspectRatio="none" aria-hidden="true">${lineSvg()}</svg>
+    <div class="cname">${esc(S.cur.name)}</div>
+    <div class="cmeta">${S.cur.gender==='男'?'乾造':'坤造'}・${a.chineseDate.split(' ')[0]}年生・屬${a.zodiac}</div>
+    <dl>
+      <dt>國曆</dt><dd>${a.solarDate} ${a.time}</dd>
+      <dt>農曆</dt><dd>${a.lunarDate}</dd>
+      <dt>八字</dt><dd>${a.chineseDate}</dd>
+      <dt>五行局</dt><dd>${a.fiveElementsClass}</dd>
+      <dt>命主／身主</dt><dd>${a.soul}／${a.body}</dd>
+      <dt>論命日</dt><dd>${fmtDate(S.refDate)}・虛歲 ${h.age.nominalAge}</dd>
+      <dt>大限</dt><dd>${dec.heavenlyStem}${dec.earthlyBranch}（${P(dec.index).decadal.range.join('–')}歲）</dd>
+      <dt>流年</dt><dd>${yr.heavenlyStem}${yr.earthlyBranch}年・流年命宮在${P(yr.index).name}</dd>
+    </dl>
+    ${flyBox}
+    <div class="legend">${HUA_NAME.map(x=>badge(x)+'生年').join(' ')}${showQT()?` <span>${badge('祿','self')}離心自化</span> <span>${badge('祿','in')}向心自化</span>`:''}${sc!=='base'?` <span>${badge('祿','sc')}${SCOPES[sc]}四化</span>`:''}</div>
+  </div>`;
+  $('#chart').innerHTML = cells + center;
+  $('#chart').querySelectorAll('.cell').forEach(b=>b.onclick=()=>{ const i=+b.dataset.i; S.sel = S.sel===i?null:i; renderChart(); });
+  document.querySelectorAll('#scopeTabs button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.sc===sc));
+}
+function anchor(i){ const [r,c]=GRID_POS[i]; const cl=v=>Math.min(300,Math.max(100,v))-100; return [cl((c+.5)*100), cl((r+.5)*100)]; }
+function lineSvg(){
+  if (S.sel===null) return '';
+  const [x0,y0] = anchor(S.sel); let s='';
+  sanfang(S.sel).slice(1).forEach(j=>{ const [x,y]=anchor(j); s+=`<line class="sfl" x1="${x0}" y1="${y0}" x2="${x}" y2="${y}"/>`; });
+  if (showQT()) fly(S.sel).forEach((f,k)=>{ if(f.to===undefined||f.to===S.sel) return; const [x,y]=anchor(f.to); const o=(k-1.5)*3; s+=`<line class="fl f-${f.hua}" x1="${x0+o}" y1="${y0+o}" x2="${x+o}" y2="${y+o}"/>`; });
+  return s;
+}
+function fmtDate(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+
+/* ---------- 論述工具 ---------- */
+function brightNote(s){ if(!s.brightness) return ''; if(GOOD_BRIGHT.includes(s.brightness)) return `${s.name}${s.brightness}，力量發揮充分。`; if(BAD_BRIGHT.includes(s.brightness)) return `${s.name}落${s.brightness}，力量受限，優點需後天努力才能展現。`; return ''; }
+function palaceText(i){
+  const p = P(i), kind = PALACE_INFO[p.name].k;
+  let majors = p.majorStars.filter(s=>STARS[s.name]), borrowed = false;
+  if (!majors.length){ majors = P(i+6).majorStars.filter(s=>STARS[s.name]); borrowed = true; }
+  let t = borrowed ? `本宮無主星，借對宮（${P(i+6).name}）${majors.map(s=>s.name).join('、')}來看，力量較弱，易受外在環境影響。` : '';
+  majors.forEach(s=>{ t += `<b>${s.name}</b>：${STARS[s.name][kind]}`; if(!borrowed) t += brightNote(s); });
+  const lk = p.minorStars.filter(s=>LUCKY.includes(s.name)||s.name==='祿存'||s.name==='天馬').map(s=>s.name);
+  const sh = p.minorStars.filter(s=>SHA.includes(s.name)).map(s=>s.name);
+  if (lk.length) t += `會${lk.join('、')}，${lk.map(n=>MINOR_DESC[n].replace(/^.*?，/,'')).join('')}`;
+  if (sh.length) t += `逢${sh.join('、')}，${sh.map(n=>MINOR_DESC[n].replace(/^.*?，/,'')).join('')}`;
+  return t;
+}
+function scoreOf(i, sc=null, h=S.h){ // 占驗派三方四正吉凶評分
+  let s = 0; const fs = sanfang(i), scm = sc ? scopeMut(sc,h) : [];
+  const bh = birthHua();
+  fs.forEach((j,k)=>{
+    const w = k===0?1:0.6, p=P(j);
+    p.majorStars.forEach(x=>{ if(GOOD_BRIGHT.includes(x.brightness)) s+=0.5*w; if(BAD_BRIGHT.includes(x.brightness)) s-=0.5*w; });
+    p.minorStars.forEach(x=>{ if(LUCKY.includes(x.name)||x.name==='祿存') s+=1*w; if(SHA.includes(x.name)) s-=1*w; });
+    if (sc) (h[sc].stars?.[j]||[]).forEach(x=>{ if(/羊|陀/.test(x.name)) s-=0.8*w; if(/祿|昌|曲|魁|鉞/.test(x.name)) s+=0.6*w; });
+    scm.forEach(m=>{ if(m.to===j) s += (m.hua==='忌'?-2:1.2)*w; });
+    Object.entries(bh).forEach(([hua,v])=>{ if(v.to===j) s += (hua==='忌'?-1:0.6)*w; });
+  });
+  return Math.round(s*10)/10;
+}
+const scoreLabel = s => s>=4?['大吉','g2']:s>=1.5?['吉','g1']:s>-1?['平','n']:s>-3?['小心','b1']:['凶','b2'];
+function sec(title, body, tag=''){ return `<section class="rs"><h3>${tag?`<span class="tag ${tag==='欽天四化'?'qt':'zy'}">${tag}</span>`:''}${title}</h3>${body}</section>`; }
+function li(arr){ return arr.length?`<ul>${arr.map(x=>`<li>${x}</li>`).join('')}</ul>`:'<p class="muted">無明顯徵象。</p>'; }
+function flyText(fromI, f, nameOf=(j)=>P(j).name){
+  if (f.to===undefined) return '';
+  const from = nameOf(fromI), to = nameOf(f.to), opp = OPP[to];
+  if (f.to===fromI) return `${from}宮干化${f.hua}（${f.star}）自化：${SELF_HUA[f.hua].split('：')[1]}`;
+  let t = `${from}化${f.hua}入${to}（${f.star}）：${PALACE_INFO[from]?.short||from}${FLY_VERB[f.hua]}${PALACE_INFO[to]?.short||to}。`;
+  if (f.hua==='忌') t += `忌入${to}即沖${opp}，${PALACE_INFO[opp].short}方面易受衝擊。`;
+  return t;
+}
+
+/* ---------- 先天命格 ---------- */
+const R = {};
+R.b01 = ()=> sec('先天十二宮星宿分析', S.a.palaces.map((p,i)=>`<div class="pal"><h4>${p.name}<small>${p.heavenlyStem}${p.earthlyBranch}・${PALACE_INFO[p.name].象}</small></h4><p>${palaceText(i)}</p></div>`).join(''));
+R.b02 = ()=>{
+  const a=S.a, mi=idx('命宮'), bi=a.palaces.findIndex(p=>p.isBodyPalace), m=P(mi);
+  const sc = scoreOf(mi), [lb] = scoreLabel(sc);
+  const ms = mainNames(m).length?mainNames(m):mainNames(P(mi+6));
+  const firstAge = parseInt(a.fiveElementsClass.match(/[二三四五六]/)?{二:2,三:3,四:4,五:5,六:6}[a.fiveElementsClass.match(/[二三四五六]/)[0]]:2);
+  let t = `<p>命宮坐${m.earthlyBranch}，${mainNames(m).length?'主星'+mainNames(m).join('、'):'無主星，借對宮'+ms.join('、')}。${ms.map(n=>STARS[n].self).join('')}</p>`;
+  t += `<p>身宮落在<b>${P(bi).name}</b>，代表中年以後的人生重心會轉向「${PALACE_INFO[P(bi).name].象}」。命主${a.soul}、身主${a.body}，可作為修身的參考星性。</p>`;
+  t += `<p>${a.fiveElementsClass}：第一個大限從 ${firstAge} 歲起運。命宮三方四正（${sanfang(mi).slice(1).map(j=>P(j).name).join('、')}）綜合評分 <b>${sc}</b>，整體屬「${lb}」格局。</p>`;
+  if (showZY()) t += `<p class="zy-note">占驗派看法：命宮的主星組合與三方吉煞決定一生的基調。${sc>=1.5?'吉星會照較多，一生較易得到助力，宜把握貴人運往上發展。':sc<=-1?'煞星會照較多，一生需靠自己打拼，經歷磨練後反而更能成事。':'吉煞參半，成敗端看大限流年的配合。'}</p>`;
+  return sec('由命宮分析特質與運程', t);
+};
+const PAIRS = {'紫微天府':'紫府同宮，權財兼具，穩重有格局，但易固執。','紫微貪狼':'紫貪同宮，才藝多、桃花旺，宜以修養約束慾望。','紫微天相':'紫相同宮，有管理才能，重視體面與規矩。','紫微七殺':'紫殺同宮，化殺為權，具開創力與領導魄力。','紫微破軍':'紫破同宮，富改革精神，一生變動多、敢衝敢闖。','天機太陰':'機陰同宮，聰明細膩，善企劃，常有變動遷移。','天機巨門':'機巨同宮，口才與分析力強，適合研究或言論工作。','天機天梁':'機梁同宮，善謀略、愛說理，適合顧問或宗教哲學。','太陽天梁':'陽梁同宮，熱心公益、重名聲，利考試與公職。','太陽巨門':'陽巨同宮，口才好、以言語成名，利外交與傳播。','太陽太陰':'日月同宮，個性陰晴不定，兼具剛柔，宜雙向發展。','武曲天府':'武府同宮，財星財庫同守，理財能力極佳。','武曲天相':'武相同宮，務實守信，適合財經專業。','武曲七殺':'武殺同宮，剛強果決，因財持刀，宜防衝動破財。','武曲破軍':'武破同宮，敢衝敢拚，財富起伏，宜專業技術取財。','武曲貪狼':'武貪同宮，先貧後富，三十歲後財運漸開。','天同太陰':'同陰同宮，溫柔多情，重感情，宜從事文藝服務業。','天同巨門':'同巨同宮，心思敏感，易有口舌，宜先苦後甘。','天同天梁':'同梁同宮，善良有福，喜照顧人，適合社福醫療。','廉貞天府':'廉府同宮，精明能幹，能守能攻。','廉貞天相':'廉相同宮，重法理與名譽，適合公職法務。','廉貞七殺':'廉殺同宮，積極拚搏，宜在專業領域發揮。','廉貞破軍':'廉破同宮，變動劇烈，敢冒險，宜守法謹慎。','廉貞貪狼':'廉貪同宮，桃花與慾望強，宜防酒色是非。'};
+function patterns(){
+  const a=S.a, mi=idx('命宮'), sf=sanfang(mi), bh=birthHua(), L=a.loc, has=(n,arr=sf)=>arr.includes(L[n]);
+  const mp=P(mi), mm=mainNames(mp), out=[];
+  if (mm.includes('紫微')&&mm.includes('天府')) out.push(['紫府同宮格','紫微天府同守命宮，一生衣食豐足、有領導氣度。']);
+  else if (has('紫微')&&has('天府')) out.push(['紫府朝垣格','紫微、天府會照命宮，主貴氣與財庫兼具，得上司賞識。']);
+  if (mm.some(n=>['七殺','破軍','貪狼'].includes(n))) out.push(['殺破狼格','命宮見七殺、破軍、貪狼，一生多變動與開創，適合在變局中求發展。']);
+  if (['天機','太陰','天同','天梁'].every(n=>has(n))) out.push(['機月同梁格','天機太陰天同天梁會於命宮三方，適合公職、企業幕僚等穩定型工作。']);
+  if (has('天府')&&has('天相')&&!mm.includes('天府')) out.push(['府相朝垣格','天府天相會照命宮，主衣祿豐足、得人尊重。']);
+  const sun=P(L['太陽']), moon=P(L['太陰']), br=(pp,n)=>pp.majorStars.find(s=>s.name===n)?.brightness;
+  if (has('太陽')&&has('太陰')&&GOOD_BRIGHT.includes(br(sun,'太陽'))&&GOOD_BRIGHT.includes(br(moon,'太陰'))) out.push(['日月並明格','太陽太陰皆廟旺並照命宮，主聰明顯達、名利雙收。']);
+  if (mm.includes('巨門')&&['子','午'].includes(mp.earthlyBranch)&&mp.majorStars.some(s=>s.mutagen&&s.mutagen!=='忌')) out.push(['石中隱玉格','巨門在子午坐命逢化吉，先隱後顯，適合專業深耕。']);
+  if (!mm.length && mp.earthlyBranch==='未' && sun.earthlyBranch==='卯' && moon.earthlyBranch==='亥') out.push(['明珠出海格','命宮在未無主星，日卯月亥拱照，主才華出眾、大器晚成。']);
+  sf.forEach(j=>{ const n=allNames(P(j)); if(n.includes('貪狼')&&n.includes('火星')) out.push(['火貪格','貪狼遇火星於命宮三方，主突發橫財或意外成就，宜見好就收。']); if(n.includes('貪狼')&&n.includes('鈴星')) out.push(['鈴貪格','貪狼遇鈴星於命宮三方，主偏財與突發機運。']); });
+  if (bh['祿'] && has('祿存') && sf.includes(bh['祿'].to)) out.push(['雙祿交流格','祿存與化祿同會命宮三方，財源廣進，一生財運佳。']);
+  if (sf.some(j=>{const n=allNames(P(j)); return n.includes('天馬')&&(n.includes('祿存')||bh['祿']?.to===j);})) out.push(['祿馬交馳格','祿與天馬同宮於命宮三方，主動中求財、出外得利。']);
+  if (['祿','權','科'].every(x=>bh[x]&&sf.includes(bh[x].to))) out.push(['三奇加會格','化祿化權化科齊會命宮，主名利雙收、做事順遂。']);
+  const nb=[P(mi-1),P(mi+1)].map(allNames);
+  const jia=(x,y)=>(nb[0].includes(x)&&nb[1].includes(y))||(nb[0].includes(y)&&nb[1].includes(x));
+  if (jia('左輔','右弼')) out.push(['左右夾命格','左輔右弼夾命，一生多得平輩助力。']);
+  if (jia('文昌','文曲')) out.push(['昌曲夾命格','文昌文曲夾命，主聰明有才學，利考試。']);
+  if (jia('天魁','天鉞')) out.push(['魁鉞夾命格','天魁天鉞夾命，貴人運強。']);
+  if (jia('擎羊','陀羅')) out.push(['羊陀夾命','擎羊陀羅夾命，做事易受牽制，宜穩紮穩打。']);
+  if ((L['天魁']===mi&&L['天鉞']===(mi+6)%12)||(L['天鉞']===mi&&L['天魁']===(mi+6)%12)) out.push(['坐貴向貴格','魁鉞一坐命一在遷移，主一生貴人相助。']);
+  if (has('太陽')&&has('天梁')&&has('文昌')&&(has('祿存')||sf.includes(bh['祿']?.to))) out.push(['陽梁昌祿格','太陽天梁文昌與祿會命，利考試、公職與學術功名。']);
+  if (allNames(mp).includes('文昌')&&allNames(mp).includes('文曲')) out.push(['文桂文華格','文昌文曲同守命宮，才華洋溢、氣質出眾。']);
+  if (bh['忌']){ const j=bh['忌'].to, n2=[P(j-1),P(j+1)].map(allNames); if((n2[0].includes('擎羊')&&n2[1].includes('陀羅'))||(n2[1].includes('擎羊')&&n2[0].includes('陀羅'))) out.push(['羊陀夾忌',`生年化忌在${P(j).name}，又被羊陀所夾，此宮事項宜格外謹慎。`]); }
+  if (!mm.length) out.push(['命無正曜','命宮無主星，個性可塑性高、適應力強，但易受環境影響，宜早立志向。']);
+  return out;
+}
+R.b03 = ()=>{
+  const ps = patterns();
+  let t = ps.length? `<div class="chips">${ps.map(([n,d])=>`<div class="pat"><b>${n}</b><span>${d}</span></div>`).join('')}</div>` : '<p class="muted">未見典型格局，屬一般格，宜看大限流年的配合。</p>';
+  const dbl = []; S.a.palaces.forEach(p=>{ const m=mainNames(p); if(m.length===2){ const k=PAIRS[m.join('')]||PAIRS[m.slice().reverse().join('')]; if(k) dbl.push(`<b>${p.name}・${m.join('')}</b>：${k}`); } });
+  t += `<h4>雙星論述</h4>${li(dbl)}`;
+  return sec('紫微格局與雙星論述', t);
+};
+R.b04 = ()=>{
+  const items = LIUHE.map(([x,y])=>{ const i=S.a.palaces.findIndex(p=>p.earthlyBranch===x), j=S.a.palaces.findIndex(p=>p.earthlyBranch===y); const A=P(i).name, B=P(j).name;
+    return `<b>${A}（${x}）與${B}（${y}）六合</b>：${PALACE_INFO[A].short}與${PALACE_INFO[B].short}暗中牽動，${A==='命宮'||B==='命宮'?`你本人與${PALACE_INFO[A==='命宮'?B:A].short}之事有特別的連結，`:''}一方有吉化時另一方也連帶受益，一方逢忌時另一方也會受到暗中影響。`; });
+  return sec('先天六合宮位分析', li(items));
+};
+R.b05 = ()=>{
+  const bh = birthHua(); const it=[];
+  HUA_NAME.forEach(x=>{ const v=bh[x]; if(!v) return; const pn=P(v.to).name; it.push(`<b>${v.star}化${x}在${pn}</b>：${HUA_PALACE[x][pn]}`); });
+  if (bh['祿']&&bh['忌']&&bh['祿'].to===bh['忌'].to) it.push(`<b>祿忌同宮</b>：生年祿忌同在${P(bh['忌'].to).name}，此宮事項先得後失或得失參半。`);
+  if (bh['忌']) it.push(`<b>忌沖</b>：生年忌在${P(bh['忌'].to).name}，沖${OPP[P(bh['忌'].to).name]}，一生中${PALACE_INFO[OPP[P(bh['忌'].to).name]].象}較易起伏。`);
+  return sec('欽天四化看生年四化的一生現象', li(it), '欽天四化');
+};
+R.b06 = ()=>{
+  const it=[]; S.a.palaces.forEach((p,i)=>fly(i).forEach(f=>{ if(f.to===i) it.push(`<b>${p.name}（${p.heavenlyStem}干）${f.star}${SELF_HUA[f.hua].slice(0,3)}</b>：${PALACE_INFO[p.name].short}方面，${SELF_HUA[f.hua].split('：')[1]}`); }));
+  const it2=[]; S.a.palaces.forEach((p,i)=>fly((i+6)%12).forEach(f=>{ if(f.to===i){ const o=P(i+6).name; it2.push(`<b>${o}（${P(i+6).heavenlyStem}干）化${f.hua}入${p.name}（${f.star}）</b>：${IN_HUA[f.hua].replace(/{A}/g,PALACE_INFO[p.name].short).replace(/{B}/g,PALACE_INFO[o].short)}`); } }));
+  return sec('欽天四化看本命自化的各種現象', `<h4>離心自化（本宮宮干化出本宮星曜）</h4>`+li(it)+`<h4>向心自化（對宮宮干化入本宮星曜）</h4>`+li(it2), '欽天四化');
+};
+R.b07 = ()=> sec('欽天四化看各宮四化入各宮的現象', S.a.palaces.map((p,i)=>{
+  const fs=fly(i);
+  return `<div class="pal"><h4>${p.name}<small>${p.heavenlyStem}干飛化：${fs.map(f=>`化${f.hua}→${f.to===undefined?'—':f.to===i?'自化':P(f.to).name}`).join('、')}</small></h4><p>${fs.filter(f=>f.hua==='祿'||f.hua==='忌').map(f=>flyText(i,f)).join('')}</p></div>`;
+}).join(''), '欽天四化');
+
+/* ---------- 運限通用 ---------- */
+function scopePalaceTable(sc){
+  const h=S.h, rows=S.a.palaces.map((p,i)=>({n:scopeName(sc,i), i})).sort((x,y)=>PALACES.indexOf(x.n)-PALACES.indexOf(y.n));
+  return `<div class="tw"><table><thead><tr><th>${SCOPES[sc]}宮位</th><th>疊本命</th><th>主星</th><th>${SCOPES[sc]}流曜</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${SCOPE_PREFIX[sc]}${r.n}</td><td>${P(r.i).name}</td><td>${mainNames(P(r.i)).join('、')||'（借'+mainNames(P(r.i+6)).join('、')+'）'}</td><td>${(h[sc].stars?.[r.i]||[]).map(s=>s.name).join(' ')}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function scopeHuaItems(sc){
+  return scopeMut(sc).filter(m=>m.to!==undefined).map(m=>{ const base=P(m.to).name, sn=scopeName(sc,m.to);
+    return `<b>${SCOPES[sc]}${m.star}化${m.hua}</b>入${SCOPE_PREFIX[sc]}${sn}（本命${base}）：${HUA_PALACE[m.hua][sn]}${m.hua==='忌'?`忌沖${SCOPE_PREFIX[sc]}${OPP[sn]}，${PALACE_INFO[OPP[sn]].short}方面需多留意。`:''}`; });
+}
+function qtPhenomena(sc){
+  const h=S.h, li0=h[sc].index, lifeStem=h[sc].heavenlyStem, it=[];
+  const nameOf=j=>scopeName(sc,j);
+  ['命宮','財帛','官祿','夫妻'].forEach(n=>{ const i=S.a.palaces.findIndex((p,k)=>nameOf(k)===n); const stem=P(i).heavenlyStem;
+    SIHUA_TABLE[stem].forEach((star,k)=>{ const hua=HUA_NAME[k]; if(hua!=='祿'&&hua!=='忌') return; const to=S.a.loc[star]; if(to===undefined) return;
+      it.push(`${SCOPE_PREFIX[sc]}${n}（${stem}干）`+flyText(i,{hua,star,to},nameOf).replace(/^[^化]*/,'')); }); });
+  const m = scopeMut(sc), ji=m.find(x=>x.hua==='忌'), bh=birthHua();
+  if (ji && bh['忌'] && ji.to===bh['忌'].to) it.push(`<b>忌星疊併</b>：${SCOPES[sc]}化忌與生年化忌同落${P(ji.to).name}，此期間${PALACE_INFO[P(ji.to).name].short}之事壓力加重，宜保守應對。`);
+  const lu=m.find(x=>x.hua==='祿'); if (lu && bh['祿'] && lu.to===bh['祿'].to) it.push(`<b>祿星疊併</b>：${SCOPES[sc]}化祿與生年化祿同落${P(lu.to).name}，${PALACE_INFO[P(lu.to).name].short}方面有加倍的收穫機會。`);
+  if (lu && ji && lu.to===ji.to) it.push(`<b>祿忌同宮</b>：${SCOPES[sc]}祿忌同在${P(lu.to).name}，先得後失，宜見好就收。`);
+  return it;
+}
+function zyPhenomena(sc){
+  const h=S.h, i=h[sc].index, sf=sanfang(i), score=scoreOf(i,sc), [lb]=scoreLabel(score), it=[];
+  const m = mainNames(P(i)).length?mainNames(P(i)):mainNames(P(i+6));
+  it.push(`${SCOPES[sc]}命宮落在本命${P(i).name}（${P(i).heavenlyStem}${P(i).earthlyBranch}），主星${m.join('、')}：這段期間的重心偏向「${PALACE_INFO[P(i).name].象}」，${m.map(n=>STARS[n].key).join('；')}的特質會被放大。`);
+  const lk=[],sh=[]; sf.forEach(j=>[...P(j).minorStars,...(h[sc].stars?.[j]||[])].forEach(s=>{ if(LUCKY.includes(s.name)||/祿|昌|曲|魁|鉞/.test(s.name)) lk.push(s.name); if(SHA.includes(s.name)||/羊|陀/.test(s.name)) sh.push(s.name); }));
+  it.push(`三方四正吉曜：${lk.join('、')||'無'}；煞曜：${sh.join('、')||'無'}。綜合評分 <b>${score}</b>（${lb}）。`);
+  const yang=(h[sc].stars||[]).findIndex(arr=>arr.some(s=>/羊$/.test(s.name))), tuo=(h[sc].stars||[]).findIndex(arr=>arr.some(s=>/陀$/.test(s.name)));
+  if (yang>=0) it.push(`${SCOPES[sc]}擎羊在${SCOPE_PREFIX[sc]}${scopeName(sc,yang)}，此宮事項易有競爭衝突；陀羅在${SCOPE_PREFIX[sc]}${scopeName(sc,tuo)}，此宮事項易拖延反覆。`);
+  it.push(score>=1.5?'整體運勢順遂，宜積極進取、擴展格局。':score<=-1?'運勢阻力較多，宜守成、避免大型投資與冒險。':'運勢平穩，按部就班即可，遇機會再出手。');
+  return it;
+}
+
+/* ---------- 大運 ---------- */
+R.d01 = ()=> sec(`大運十二宮星宿分析（${P(S.h.decadal.index).decadal.range.join('–')}歲）`, scopePalaceTable('decadal'));
+R.d02 = ()=> sec('大運之四化現象', li(scopeHuaItems('decadal')));
+R.d03 = ()=> sec('欽天四化論本大運會發生之現象', li(qtPhenomena('decadal')), '欽天四化');
+R.d04 = ()=>{
+  const rows = S.a.palaces.map((p,i)=>({i, r:p.decadal.range})).sort((x,y)=>x.r[0]-y.r[0]).map(x=>{
+    const y = S.a.birthYear + x.r[0] - 1, hh = hYear(y+1), sc = scoreOf(x.i,'decadal',hh), [lb,cls]=scoreLabel(sc);
+    const w = Math.min(100, Math.abs(sc)*12);
+    return `<tr class="${hh.decadal.index===S.h.decadal.index?'now':''}"><td>${x.r.join('–')}歲</td><td>${y}–${y+9}</td><td>${P(x.i).name}・${mainNames(P(x.i)).join('')||'空宮'}</td><td class="bar"><span class="${sc>=0?'pos':'neg'}" style="width:${w}%"></span></td><td><i class="lv ${cls}">${lb}</i></td></tr>`; }).join('');
+  return sec('占驗派論本大運現象', li(zyPhenomena('decadal')) + `<h4>十個大限吉凶一覽</h4><div class="tw"><table class="dec"><thead><tr><th>歲數</th><th>年份</th><th>大限命宮</th><th>評分</th><th>論斷</th></tr></thead><tbody>${rows}</tbody></table></div>`, '占驗派');
+};
+/* ---------- 流年 ---------- */
+R.y01 = ()=> sec(`流年十二宮星宿分析（${S.h.yearly.heavenlyStem}${S.h.yearly.earthlyBranch}年）`, scopePalaceTable('yearly'));
+R.y02 = ()=>{ const i=S.h.yearly.index, m=mainNames(P(i)).length?mainNames(P(i)):mainNames(P(i+6)); return sec('流年命宮星性特質', `<p>今年流年命宮在本命${P(i).name}，主星${m.join('、')}。${m.map(n=>`<b>${n}</b>（${STARS[n].key}）：${STARS[n].self}`).join('')}今年做事的態度會帶有這些星性色彩，重心落在「${PALACE_INFO[P(i).name].象}」。</p>`); };
+R.y03 = ()=> sec('欽天四化論流年四化現象', li(scopeHuaItems('yearly')), '欽天四化');
+R.y04 = ()=> sec('欽天四化論今年會發生之現象', li(qtPhenomena('yearly')), '欽天四化');
+R.y05 = ()=> sec('占驗派論流年現象', li(zyPhenomena('yearly')), '占驗派');
+/* ---------- 流月流日 ---------- */
+R.m01 = ()=> sec(`欽天四化論流月四化現象（${S.h.monthly.heavenlyStem}${S.h.monthly.earthlyBranch}月）`, li(scopeHuaItems('monthly')), '欽天四化');
+R.m02 = ()=> sec('欽天四化論本月會發生之現象', li(qtPhenomena('monthly')), '欽天四化');
+R.m03 = ()=> sec('占驗派論流月現象', li(zyPhenomena('monthly')), '占驗派');
+R.m04 = ()=> sec(`欽天四化論流日四化現象（${fmtDate(S.refDate)}・${S.h.daily.heavenlyStem}${S.h.daily.earthlyBranch}日）`, li(scopeHuaItems('daily')), '欽天四化');
+R.m05 = ()=> sec('欽天四化論本日會發生之現象', li(qtPhenomena('daily')), '欽天四化');
+R.m06 = ()=> sec('占驗派論流日現象', li(zyPhenomena('daily')), '占驗派');
+
+/* ---------- 一生機運預測 ---------- */
+function scanYears(){
+  const y0 = S.refDate.getFullYear(), out=[];
+  for (let y=y0; y<=y0+10; y++){ const h=hYear(y); out.push({y, h, gz:h.yearly.heavenlyStem+h.yearly.earthlyBranch, li:h.yearly.index, mut:scopeMut('yearly',h), dmut:scopeMut('decadal',h), age:h.age.nominalAge}); }
+  return out;
+}
+function decadesWith(test){ return S.a.palaces.map((p,i)=>({i,r:p.decadal.range})).sort((a,b)=>a.r[0]-b.r[0]).filter(d=>{ const hh=hYear(S.a.birthYear+d.r[0]); return test(hh, d.i); }).map(d=>`${d.r.join('–')}歲`); }
+const hit = (mut, hua, name) => mut.some(m=>m.hua===hua && m.to===idx(name));
+function yearList(ys, test, why){ const r=ys.filter(test).map(o=>`${o.y}（${o.gz}・${o.age}歲）${why(o)}`); return r.length?li(r):'<p class="muted">未來十年未見明顯應期。</p>'; }
+R.l01 = ()=>{ const ys=scanYears(), p=P(idx('官祿')), f=P(idx('父母'));
+  const loc=n=>P(S.a.loc[n]).name;
+  return sec('論學歷與考試運', `<p>文昌在${loc('文昌')}、文曲在${loc('文曲')}；官祿宮主星${mainNames(p).join('、')||'空宮'}，父母宮（文書）主星${mainNames(f).join('、')||'空宮'}。${[idx('命宮'),idx('官祿'),idx('父母')].some(j=>['文昌','文曲'].includes(allNames(P(j)).find(n=>n==='文昌'||n==='文曲')))?'昌曲會入命、官或父母，讀書考試有天分。':'昌曲不在主要宮位，學業靠後天勤勉。'}</p><h4>考試有利年份</h4>`+yearList(ys,o=>hit(o.mut,'科','官祿')||hit(o.mut,'祿','官祿')||hit(o.mut,'科','父母')||hit(o.mut,'科','命宮'),o=>'：流年科祿照官祿／父母，利考試證照。')); };
+R.l02 = ()=>{ const ys=scanYears(), hl=S.a.loc['紅鸞'], tx=S.a.loc['天喜'];
+  return sec('論紅鸞星動與結婚機運', `<p>本命紅鸞在${P(hl).name}、天喜在${P(tx).name}。流年命宮走到紅鸞、天喜或本命夫妻宮，或流年化祿入夫妻宮時，是感情與婚姻的主要應期。</p>`+yearList(ys,o=>[hl,tx,idx('夫妻')].includes(o.li)||hit(o.mut,'祿','夫妻'),o=>`：${o.li===hl?'流年命逢紅鸞':o.li===tx?'流年命逢天喜':o.li===idx('夫妻')?'流年命宮走本命夫妻宮':'流年化祿入夫妻'}`)); };
+R.l03 = ()=>{ const sp=idx('夫妻'), m=mainNames(P(sp)).length?mainNames(P(sp)):mainNames(P(sp+6)); const peach=[];
+  ['命宮','夫妻','遷移','福德'].forEach(n=>{ const ps=allNames(P(idx(n))).filter(x=>PEACH.includes(x)); if(ps.length) peach.push(`${n}見${ps.join('、')}`); });
+  const bh=birthHua(); let t=`<p>夫妻宮主星${m.join('、')}：${m.map(n=>STARS[n].spouse).join('')}</p><p>桃花星分布：${peach.join('；')||'桃花星不在主要宮位，感情較單純'}。${peach.length>=3?'桃花旺盛，異性緣佳，婚後宜注意界線。':''}</p>`;
+  if (bh['忌']&&[sp,(sp+6)%12].includes(bh['忌'].to)) t+='<p>生年忌在夫妻或官祿（沖夫妻），婚姻需多經營，晚婚較能減少波折。</p>';
+  t+=`<h4>婚姻宜留意的大限</h4>`+li(decadesWith((hh)=>scopeMut('decadal',hh).some(x=>x.hua==='忌'&&[sp,(sp+6)%12].includes(x.to))).map(x=>x+'：大限化忌入夫妻或沖夫妻，宜多溝通包容'));
+  return sec('論婚姻與桃花運', t); };
+R.l04 = ()=>{ const ji=idx('疾厄'), m=mainNames(P(ji)).length?mainNames(P(ji)):mainNames(P(ji+6)); const wx=[...new Set(m.flatMap(n=>[...STARS[n].wx]))]; const ys=scanYears();
+  return sec('論身體病痛', `<p>疾厄宮${mainNames(P(ji)).length?'主星':'無主星，借對宮'}${m.join('、')}：${m.map(n=>STARS[n].health).join('')}五行偏${wx.join('、')}，宜保養${wx.map(w=>ORGAN[w]).join('；')}。${P(ji).minorStars.some(s=>SHA.includes(s.name))?'疾厄見煞，留意意外傷害或手術。':''}</p><h4>健康宜注意年份</h4>`+yearList(ys,o=>hit(o.mut,'忌','疾厄')||hit(o.mut,'忌','父母')||o.li===ji,o=>'：'+(hit(o.mut,'忌','疾厄')?'流年化忌入疾厄':hit(o.mut,'忌','父母')?'流年化忌沖疾厄':'流年命宮走疾厄')+'，宜安排健康檢查、作息規律')+'<p class="muted">命理僅供參考，身體不適請以醫師診斷為準。</p>'); };
+R.l05 = ()=>{ const ys=scanYears(); return sec('論破財時機', `<p>化忌入財帛為財務緊縮、入福德則沖財帛，均為破財應期；地空地劫在${P(S.a.loc['地空']).name}、${P(S.a.loc['地劫']).name}。</p><h4>大限</h4>`+li(decadesWith(hh=>scopeMut('decadal',hh).some(x=>x.hua==='忌'&&[idx('財帛'),idx('福德')].includes(x.to))).map(x=>x+'：大限忌照財帛，十年間理財宜保守'))+'<h4>流年</h4>'+yearList(ys,o=>hit(o.mut,'忌','財帛')||hit(o.mut,'忌','福德'),o=>'：流年化忌照財帛，避免借貸、作保與高風險投資')); };
+R.l06 = ()=>{ const ys=scanYears(); return sec('論田宅及置產時機', `<p>田宅宮主星${mainNames(P(idx('田宅'))).join('、')||'空宮'}：${(mainNames(P(idx('田宅'))).length?mainNames(P(idx('田宅'))):mainNames(P(idx('田宅')+6))).map(n=>STARS[n].property).join('')}</p><h4>置產有利大限</h4>`+li(decadesWith(hh=>scopeMut('decadal',hh).some(x=>(x.hua==='祿'||x.hua==='權')&&x.to===idx('田宅'))).map(x=>x+'：大限祿權入田宅'))+'<h4>置產有利年份</h4>'+yearList(ys,o=>hit(o.mut,'祿','田宅')||hit(o.mut,'權','田宅'),o=>'：流年祿權入田宅，宜購屋或裝修')); };
+R.l07 = ()=>{ const ys=scanYears(), gl=idx('官祿'); return sec('論工作上之升遷機運', `<p>官祿宮${mainNames(P(gl)).join('、')||'空宮'}：${(mainNames(P(gl)).length?mainNames(P(gl)):mainNames(P(gl+6))).map(n=>STARS[n].career).join('')}</p><h4>升遷有利年份</h4>`+yearList(ys,o=>hit(o.mut,'權','官祿')||hit(o.mut,'祿','官祿')||o.li===gl,o=>`：${o.li===gl?'流年命宮走官祿':'流年祿權入官祿'}，爭取表現與升遷`)); };
+R.l08 = ()=>{ const ys=scanYears(); const xing=S.a.loc['天刑']; return sec('論官非與訴訟機運', `<p>天刑在${P(xing).name}。化忌入官祿、僕役或父母（文書），或丙年廉貞化忌照命，皆為口舌官非的應期，簽約與報稅宜謹慎。</p>`+yearList(ys,o=>hit(o.mut,'忌','官祿')||hit(o.mut,'忌','父母')||(o.mut[3].star==='廉貞'&&sanfang(idx('命宮')).includes(o.mut[3].to)),o=>'：文書契約、法律事務多加留意')); };
+R.l09 = ()=>{ const ys=scanYears(); return sec('論意外與車禍機運', `<p>遷移宮${allNames(P(idx('遷移'))).filter(n=>SHA.includes(n)).join('、')||'無煞星'}，疾厄宮${allNames(P(idx('疾厄'))).filter(n=>SHA.includes(n)).join('、')||'無煞星'}。流年化忌入遷移、疾厄，或流年擎羊入流年命宮時，交通與運動安全宜多注意。</p>`+yearList(ys,o=>hit(o.mut,'忌','遷移')||hit(o.mut,'忌','疾厄')||(o.h.yearly.stars[o.li]||[]).some(s=>s.name==='流羊'),o=>'：出行放慢速度，避免高風險活動')); };
+R.l10 = ()=>{ const ys=scanYears(), L=S.a.loc; const pu=idx('僕役'); return sec('論貴人與小人機運', `<p>天魁在${P(L['天魁']).name}、天鉞在${P(L['天鉞']).name}、左輔在${P(L['左輔']).name}、右弼在${P(L['右弼']).name}，貴人多來自這些宮位代表的人事。僕役宮${mainNames(P(pu)).join('、')||'空宮'}：${(mainNames(P(pu)).length?mainNames(P(pu)):mainNames(P(pu+6))).map(n=>STARS[n].kin).join('')}</p><h4>貴人年</h4>`+yearList(ys,o=>hit(o.mut,'祿','僕役')||hit(o.mut,'科','僕役'),o=>'：朋友同事助力大')+'<h4>防小人年</h4>'+yearList(ys,o=>hit(o.mut,'忌','僕役')||hit(o.mut,'忌','兄弟'),o=>'：避免借貸作保，人際界線要清楚')); };
+
+/* ---------- 知命造運 ---------- */
+function lifeWx(){ const mi=idx('命宮'); const m=mainNames(P(mi)).length?mainNames(P(mi)):mainNames(P(mi+6)); return STARS[m[0]].wx[0]; }
+R.k01 = ()=>{ const wx=lifeWx(), L=WX_LUCK[wx], yb=S.a.chineseDate.split(' ')[0][1];
+  return sec('用紫微論幸運密碼與守護神', `<div class="kv"><div><span>命宮主星五行</span><b>${wx}</b></div><div><span>幸運數字</span><b>${L.num}</b></div><div><span>幸運色</span><b>${L.color}</b></div><div><span>有利方位</span><b>${L.dir}</b></div><div><span>開運小物</span><b>${L.item}</b></div><div><span>生肖守護神（${yb}年生）</span><b>${GUARDIAN[yb]}</b></div></div>`); };
+R.k02 = ()=>{ const set=new Set(); ['命宮','官祿','財帛'].forEach(n=>{ const i=idx(n); (mainNames(P(i)).length?mainNames(P(i)):mainNames(P(i+6))).forEach(s=>set.add(s)); });
+  return sec('用紫微論最有利的工作與職業', li([...set].map(n=>`<b>${n}</b>：${STARS[n].career}`))); };
+R.k03 = ()=>{ const gl=idx('官祿'), fs=fly(gl), it=[];
+  fs.forEach(f=>{ if(f.hua==='忌'||f.hua==='祿') it.push(flyText(gl,f)); });
+  it.push(...decadesWith(hh=>scopeMut('decadal',hh).some(x=>x.hua==='忌'&&[gl,(gl+6)%12].includes(x.to))).map(x=>`${x}：大限忌照官祿，工作易有轉換或壓力加重`));
+  it.push(...decadesWith(hh=>scopeMut('decadal',hh).some(x=>(x.hua==='祿'||x.hua==='權')&&x.to===gl)).map(x=>`${x}：大限祿權入官祿，事業擴展期`));
+  return sec('用紫微論工作事業上的變化', li(it)); };
+R.k04 = ()=>{ const mi=idx('命宮'), sf=sanfang(mi), ji=new Set(), sh=new Set(); sf.forEach(j=>P(j).minorStars.forEach(s=>{ if(LUCKY.includes(s.name)||s.name==='祿存') ji.add(s.name); if(SHA.includes(s.name)) sh.add(s.name); }));
+  return sec('論一生吉星與凶星如何解之', `<p>命宮三方四正吉星：${[...ji].join('、')||'無'}。${[...ji].map(n=>MINOR_DESC[n]).join('')}</p><h4>凶星化解建議</h4>`+li([...sh].map(n=>`<b>${n}</b>：${SHA_ADVICE[n]}`))); };
+R.k05 = ()=>{ const fd=idx('福德'), m=mainNames(P(fd)).length?mainNames(P(fd)):mainNames(P(fd+6));
+  return sec('人生該注意之瑣事漫談', li([`福德宮${m.join('、')}：${m.map(n=>STARS[n].mind).join('')}`, `遷移宮${(mainNames(P(idx('遷移'))).length?mainNames(P(idx('遷移'))):mainNames(P(idx('命宮')))).map(n=>STARS[n].outside).join('')}`, '命盤呈現的是傾向與時機，真正的選擇在自己。吉運時積極把握，逆運時修身養性，就是知命造運的精神。'])); };
+
+/* ---------- 命書選單 ---------- */
+const MENU = [
+ {g:'先天命格分析', items:[['b01','先天十二宮星宿分析'],['b02','由命宮分析特質與運程'],['b03','紫微格局與雙星論述'],['b04','先天六合宮位分析','zy'],['b05','欽天四化看生年四化的一生現象','qt'],['b06','欽天四化看本命自化的各種現象','qt'],['b07','欽天四化看各宮四化入各宮的現象','qt']]},
+ {g:'大運分析', items:[['d01','大運十二宮星宿分析'],['d02','大運之四化現象'],['d03','欽天四化論本大運會發生之現象','qt'],['d04','占驗派論本大運現象','zy']]},
+ {g:'流年分析', items:[['y01','流年十二宮星宿分析'],['y02','流年命宮星性特質'],['y03','欽天四化論流年四化現象','qt'],['y04','欽天四化論今年會發生之現象','qt'],['y05','占驗派論流年現象','zy']]},
+ {g:'流月、流日分析', items:[['m01','欽天四化論流月四化現象','qt'],['m02','欽天四化論本月會發生之現象','qt'],['m03','占驗派論流月現象','zy'],['m04','欽天四化論流日四化現象','qt'],['m05','欽天四化論本日會發生之現象','qt'],['m06','占驗派論流日現象','zy']]},
+ {g:'一生機運預測', items:[['l01','論學歷與考試運'],['l02','論紅鸞星動與結婚機運'],['l03','論婚姻與桃花運'],['l04','論身體病痛'],['l05','論破財時機'],['l06','論田宅及置產時機'],['l07','論工作上之升遷機運'],['l08','論官非與訴訟機運'],['l09','論意外與車禍機運'],['l10','論貴人與小人機運']]},
+ {g:'知命造運改變一生', items:[['k01','用紫微論幸運密碼與守護神'],['k02','用紫微論最有利的工作與職業'],['k03','用紫微論工作事業上的變化'],['k04','論一生吉星與凶星如何解之'],['k05','人生該注意之瑣事漫談']]}
+];
+function renderMenu(){
+  const chosen = new Set(LS.get('zw-menu', ['b01','b02','b03','b05','d03','d04','y04','y05']));
+  $('#menu').innerHTML = MENU.map((g,gi)=>`<fieldset><legend>${g.g}<span><button type="button" data-all="${gi}">全選</button><button type="button" data-none="${gi}">取消</button></span></legend>${g.items.map(([id,t,sch])=>`<label class="${sch||''}" ${sch==='qt'&&!showQT()||sch==='zy'&&!showZY()?'hidden':''}><input type="checkbox" id="m-${id}" value="${id}" ${chosen.has(id)?'checked':''}>${t}${sch?`<i class="tag ${sch}">${sch==='qt'?'欽天':'占驗'}</i>`:''}</label>`).join('')}</fieldset>`).join('');
+  $('#menu').querySelectorAll('[data-all],[data-none]').forEach(b=>b.onclick=()=>{ const fs=b.closest('fieldset'); fs.querySelectorAll('label:not([hidden]) input').forEach(c=>c.checked=!!b.dataset.all); saveMenu(); });
+  $('#menu').onchange = saveMenu;
+}
+function saveMenu(){ LS.set('zw-menu', [...document.querySelectorAll('#menu input:checked')].map(c=>c.value)); }
+function genReport(scroll=true){
+  const ids = [...document.querySelectorAll('#menu label:not([hidden]) input:checked')].map(c=>c.value);
+  if (!ids.length){ $('#report').innerHTML = '<p class="muted">請先勾選要輸出的命書項目。</p>'; return; }
+  let html = `<header class="rh"><h2>${esc(S.cur.name)} 命書</h2><p>${S.cur.gender==='男'?'乾造':'坤造'}・國曆 ${S.a.solarDate}・農曆 ${S.a.lunarDate} ${S.a.time}・${S.a.fiveElementsClass}・論命日 ${fmtDate(S.refDate)}・派別：${{both:'雙系統',zy:'占驗派',qt:'欽天四化'}[S.school]}</p></header>`;
+  MENU.forEach(g=>{ const its=g.items.filter(([id])=>ids.includes(id)); if(!its.length) return; html += `<h2 class="gh">${g.g}</h2>` + its.map(([id])=>{ try{ return R[id](); }catch(e){ console.error(e); return sec('（此項目無法產生）',`<p class="muted">${esc(e.message)}</p>`); } }).join(''); });
+  html += '<p class="muted foot-note">本命書由程式依紫微斗數傳統規則自動組合，內容供參考與自我覺察之用，重大決定請綜合實際情況判斷。</p>';
+  $('#report').innerHTML = html; if (scroll===true) $('#report').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+}
+
+/* ---------- 問測者表單 ---------- */
+function renderCases(){
+  const list = [SAMPLE, ...S.cases];
+  $('#caseList').innerHTML = list.map(c=>`<li><button type="button" data-id="${c.id}" aria-current="${S.cur&&S.cur.id===c.id}">${esc(c.name)}${c.sample?'<small>範例</small>':''}</button>${c.sample?'':`<button type="button" class="del" data-del="${c.id}" aria-label="刪除 ${esc(c.name)}">×</button>`}</li>`).join('');
+  $('#caseList').querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>{ const c=list.find(x=>x.id===b.dataset.id); loadCase(c); });
+  $('#caseList').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{ if(b.dataset.armed){ S.cases=S.cases.filter(x=>x.id!==b.dataset.del); LS.set('zw-cases',S.cases); renderCases(); } else { b.dataset.armed=1; b.textContent='確定刪除'; setTimeout(()=>{ if(b.isConnected){ delete b.dataset.armed; b.textContent='×'; } },3000); } });
+}
+function loadCase(c){
+  S.cur = {...c};
+  $('#fName').value=c.name; $('#fGender').value=c.gender; $('#fCal').value=c.cal; $('#fDate').value=c.date; $('#fLeap').checked=!!c.leap; $('#fHour').value=c.hour;
+  $('#leapWrap').hidden = c.cal!=='lunar';
+  S.sel=null; refresh(); renderCases();
+}
+function readForm(){ return {name:$('#fName').value.trim()||'未命名', gender:$('#fGender').value, cal:$('#fCal').value, date:$('#fDate').value, leap:$('#fLeap').checked, hour:+$('#fHour').value}; }
+function refresh(){
+  try { compute(); $('#err').hidden=true; renderDec(); renderChart(); $('#report').innerHTML=''; }
+  catch(e){ console.error(e); $('#err').hidden=false; $('#err').textContent='無法排盤：請確認出生日期格式正確（農曆日期不可超過當月天數）。'; }
+}
+
+function renderDec(){
+  const ds=S.a.palaces.map((p,i)=>({i,r:p.decadal.range})).sort((x,y)=>x.r[0]-y.r[0]);
+  $('#fDec').innerHTML=ds.map((d,k)=>`<option value="${d.r[0]}" ${S.h.decadal.index===d.i?'selected':''}>第${k+1}大限 ${d.r.join('–')}歲</option>`).join('');
+}
+function init(){
+  if (typeof iztro==='undefined'){ $('#err').hidden=false; $('#err').textContent='排盤引擎載入失敗，請重新整理頁面。'; return; }
+  $('#fHour').innerHTML = HOURS.map((h,i)=>`<option value="${i}">${h}</option>`).join('');
+  S.cases = LS.get('zw-cases', []); S.school = LS.get('zw-school','both');
+  S.refDate = new Date(); S.refDate.setHours(12,0,0,0);
+  $('#fRef').value = fmtDate(S.refDate);
+  document.querySelectorAll('[name=school]').forEach(r=>{ r.checked = r.value===S.school; r.onchange=()=>{ S.school=r.value; LS.set('zw-school',S.school); renderMenu(); renderChart(); }; });
+  $('#fCal').onchange = ()=>{ $('#leapWrap').hidden = $('#fCal').value!=='lunar'; };
+  $('#form').onsubmit = e=>{ e.preventDefault(); const f=readForm(); if(!f.date){ $('#err').hidden=false; $('#err').textContent='請填寫出生日期。'; return; } S.cur={...f, id:'tmp'}; S.sel=null; refresh(); renderCases(); };
+  $('#saveCase').onclick = ()=>{ const f=readForm(); if(!f.date) return; const ex=S.cases.find(c=>c.name===f.name); const c={...f, id: ex?ex.id:'c'+Date.now()}; S.cases = ex? S.cases.map(x=>x.id===ex.id?c:x) : [...S.cases, c]; LS.set('zw-cases',S.cases); S.cur=c; refresh(); renderCases(); $('#saveCase').textContent='已儲存'; setTimeout(()=>$('#saveCase').textContent='儲存問測者',1500); };
+  $('#fRef').onchange = ()=>{ const v=$('#fRef').value; if(!v) return; const [y,m,d]=v.split('-').map(Number); S.refDate=new Date(y,m-1,d,12); refresh(); };
+  const shift=(dy,dm)=>{ const d=new Date(S.refDate); d.setFullYear(d.getFullYear()+dy); d.setMonth(d.getMonth()+dm); S.refDate=d; $('#fRef').value=fmtDate(d); refresh(); };
+  $('#yPrev').onclick=()=>shift(-1,0); $('#yNext').onclick=()=>shift(1,0); $('#mPrev').onclick=()=>shift(0,-1); $('#mNext').onclick=()=>shift(0,1);
+  $('#today').onclick=()=>{ S.refDate=new Date(); S.refDate.setHours(12,0,0,0); $('#fRef').value=fmtDate(S.refDate); refresh(); };
+  document.querySelectorAll('#scopeTabs button').forEach(b=>b.onclick=()=>{ S.scope=b.dataset.sc; renderChart(); });
+  $('#fDec').onchange=()=>{ const y=S.a.birthYear+ +$('#fDec').value-1; S.refDate=new Date(y,7,15,12); $('#fRef').value=fmtDate(S.refDate); S.scope='decadal'; refresh(); };
+  $('#fMini').onchange=()=>{ S.mini=$('#fMini').checked; renderChart(); };
+  $('#gen').onclick = ()=>genReport(true);
+  $('#copy').onclick = ()=>{ const t=$('#report').innerText; if(!t.trim()) return; navigator.clipboard.writeText(t).then(()=>{ $('#copy').textContent='已複製'; setTimeout(()=>$('#copy').textContent='複製命書文字',1500); }).catch(()=>{ const r=document.createRange(); r.selectNodeContents($('#report')); const s=getSelection(); s.removeAllRanges(); s.addRange(r); }); };
+  renderMenu(); loadCase(SAMPLE); genReport(false);
+}
+init();
+</script></body></html>
